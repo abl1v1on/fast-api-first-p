@@ -1,6 +1,7 @@
+from typing import List
 from sqlalchemy import select
 from database import new_session, TaskTable
-from schemas import TaskAdd
+from schemas import TaskAdd, Task
 
 
 class TaskRepository:
@@ -20,11 +21,13 @@ class TaskRepository:
             return task.id
     
     @classmethod
-    async def get_all(cls):
+    async def get_all(cls) -> List[Task]:
         async with new_session() as session:
             tasks = select(TaskTable)
             result = await session.execute(tasks)
-            return result.scalars().all()
+            task_models = result.scalars().all()
+            task_schemas = [Task.model_validate(i) for i in task_models]
+            return task_schemas
         
     @classmethod
     async def get_one(cls, task_id: int):

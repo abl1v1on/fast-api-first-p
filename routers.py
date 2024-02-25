@@ -13,7 +13,7 @@ router = APIRouter(
 
 
 @router.get('/tasks')
-async def get_tasks() -> List[Task]:
+async def get_tasks():
     tasks = await TaskRepository.get_all()
     return {'tasks': tasks}
 
